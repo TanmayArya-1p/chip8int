@@ -2,6 +2,9 @@
 #include "../include/memory.h"
 #include "../include/interpreter.h"
 
+#include <SDL2/SDL_events.h>
+#include <chrono>
+#include <ctime>
 #include <unistd.h>
 
 
@@ -16,15 +19,27 @@ int main(int argc, char* argv[]) {
 
     SDL_Event event;
     bool quit = false;
+
+    int ctr = 0;
+    auto start_time = std::chrono::system_clock::now();
+
+
     while(!quit) {
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
                 quit = true;
             }
+
         }
-        SDL_Delay(16);
+        SDL_Delay(argv[3] ? atoi(argv[3]) : 10);
+        ctr++;
         cpu->next_instruction();
     }
+
+    auto end_time = std::chrono::system_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+    std::cout << "Execution time: " << duration << " ms" << std::endl;
+    std::cout << "Instructions per second: " << ctr/(duration/1000.0) << std::endl;
 
     return 0;
 }
