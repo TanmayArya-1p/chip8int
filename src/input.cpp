@@ -21,9 +21,9 @@ bool chip8::handle_key_state_change(SDL_Event& event) {
         {SDL_SCANCODE_S, 7},
         {SDL_SCANCODE_D, 8},
         {SDL_SCANCODE_F, 14},
-        {SDL_SCANCODE_Z, 10},
-        {SDL_SCANCODE_X, 11},
-        {SDL_SCANCODE_C, 12},
+        {SDL_SCANCODE_Z, 9},
+        {SDL_SCANCODE_X, 10},
+        {SDL_SCANCODE_C, 11},
         {SDL_SCANCODE_V, 15},
     };
 
@@ -33,6 +33,6 @@ bool chip8::handle_key_state_change(SDL_Event& event) {
     if(key_map.find(key) == key_map.end()) {
         return false;
     }
-    chip8::KeyState[key] = (event.type == SDL_KEYDOWN);
+    chip8::KeyState[key_map[key]] = (event.type == SDL_KEYDOWN);
     return true;
 }

@@ -11,6 +11,7 @@
 
 chip8::Display::Display(int scale) {
     this->scale = scale;
+    memset(this->pixels, 0, sizeof(this->pixels));
    	if ( SDL_Init( SDL_INIT_EVERYTHING ) < 0 ) {
 		std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
 		exit(1);
@@ -36,6 +37,7 @@ chip8::Display::~Display() {
 
 void chip8::Display::clear() {
     SDL_FillRect(this->winsurface, NULL, SDL_MapRGB( this->winsurface->format, 0, 0, 0 ));
+    memset(this->pixels, 0, sizeof(this->pixels));
     SDL_UpdateWindowSurface(this->window);
 }
 
@@ -43,9 +45,9 @@ bool chip8::Display::draw_sprite(uint8_t x, uint8_t y, std::vector<uint8_t> spri
     bool erased = false;
     for(size_t i=0;i<sprite.size();i++) {
         for(size_t j=0;j<8;j++) {
-            if(sprite[i] & (1 << j)) {
+            if(sprite[i] & (0x80 >> j)) {
 
-                int XX = (x+7-j)%SCREEN_WIDTH;
+                int XX = (x+j)%SCREEN_WIDTH;
                 int YY = (y+i)%SCREEN_HEIGHT;
 
                 this->pixels[XX][YY] ^= true;

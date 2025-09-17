@@ -33,7 +33,7 @@ chip8::CPU::CPU(chip8::Memory* memory, chip8::Display* display, bool legacy_shif
 int chip8::CPU::next_instruction() {
     this->opcode = memory->read_instruction(regs.pc);
     regs.pc += 2;
-
+    std::cout << "Opcode: " << std::hex << opcode.opcode << std::endl;
     switch(opcode.opnibble) {
         case(0x0):
             switch(opcode.opcode) {
@@ -43,6 +43,10 @@ int chip8::CPU::next_instruction() {
                     break;
                 case(0x00EE):
                     //return after subroutine call
+                    if(stack.empty()) {
+                        std::cout << "Stack underflow" << std::endl;
+                        exit(1);
+                    }
                     regs.pc = stack.back();
                     stack.pop_back();
                     break;
@@ -96,15 +100,15 @@ int chip8::CPU::next_instruction() {
                     break;
                 case(0x1):
                     //vx=vx|vy
-                    this->regs.v[opcode.n1] = this->regs.v[opcode.n2] | this->regs.v[opcode.n1];
+                    this->regs.v[opcode.n1] = this->regs.v[opcode.n1] | this->regs.v[opcode.n2];
                     break;
                 case(0x2):
                     //vx=vx&vy
-                    this->regs.v[opcode.n1] = this->regs.v[opcode.n2] & this->regs.v[opcode.n1];
+                    this->regs.v[opcode.n1] = this->regs.v[opcode.n1] & this->regs.v[opcode.n2];
                     break;
                 case(0x3):
                     //vx=vx^vy
-                    this->regs.v[opcode.n1] = this->regs.v[opcode.n2] ^ this->regs.v[opcode.n1];
+                    this->regs.v[opcode.n1] = this->regs.v[opcode.n1] ^ this->regs.v[opcode.n2];
                     break;
                 case(0x4):
                     //vx=vx+vy
@@ -155,7 +159,7 @@ int chip8::CPU::next_instruction() {
         case(0xD): {
             //draw sprite
             size_t n = opcode.n3;
-            std::vector<uint8_t> sprite(16,0);
+            std::vector<uint8_t> sprite(n,0);
             for (int i=0;i<n;i++) {
                 sprite[i] = memory->read(this->regs.i+i);
             }
@@ -167,12 +171,12 @@ int chip8::CPU::next_instruction() {
             switch (opcode.nn) {
                 case(0x9E):
                     //skip if key is pressed
-                    if(chip8::KeyState.at(this->regs.v[opcode.n1]))
+                    if(chip8::KeyState.at(this->regs.v[opcode.n1-1]))
                         this->regs.pc += 2;
                     break;
                 case(0xA1):
                     //skip if key is not pressed
-                    if(!chip8::KeyState.at(this->regs.v[opcode.n1]))
+                    if(!chip8::KeyState.at(this->regs.v[opcode.n1-1]))
                         this->regs.pc += 2;
                     break;
                 default:
@@ -184,15 +188,29 @@ int chip8::CPU::next_instruction() {
         case(0xF) : {
             switch(opcode.nn) {
                 case(0x1E) : {
-
                     #ifdef AMIGA_OVERFLOW_FLAGSET
-                        if(static_cast<int>(this->regs.i) + static_cast<int>(this->regs.v[opcode.n1]) > 0xFF)
+                        if(static_cast<int>(this->regs.i) + static_cast<int>(this->regs.v[opcode.n1]) > 0xFFF)
                             this->regs.v[0xF] = 1;
                         else
                             this->regs.v[0xF] = 0;
                     #endif
 
                     this->regs.i += this->regs.v[opcode.n1];
+                    break;
+                }
+                case(0x07) : {
+                    //set vx to delay timer register
+                    this->regs.v[opcode.n1] = this->regs.delay_timer;
+                    break;
+                }
+                case(0x15) : {
+                    //set delay timer to vx value
+                    this->regs.delay_timer = this->regs.v[opcode.n1];
+                    break;
+                }
+                case(0x18) : {
+                    //set sound timer to vx value
+                    this->regs.sound_timer = this->regs.v[opcode.n1];
                     break;
                 }
                 case(0x0A) : {
@@ -203,17 +221,17 @@ int chip8::CPU::next_instruction() {
                 }
                 case(0x29) : {
                     //set i to address of requested font
-                    this->regs.i = 0x050+this->regs.v[opcode.n1];
+                    this->regs.i = 0x050+this->regs.v[opcode.n1]*5;
                     break;
                 }
                 case(0x33): {
                     //binary to decimal conversion
                     uint8_t x = this->regs.v[opcode.n1];
-                    this->memory->write(this->regs.i, x%10);
+                    this->memory->write(this->regs.i+2, x%10);
                     x /= 10;
                     this->memory->write(this->regs.i+1, x%10);
                     x /= 10;
-                    this->memory->write(this->regs.i+2, x%10);
+                    this->memory->write(this->regs.i, x%10);
                     break;
                 }
                 case(0x55): {
