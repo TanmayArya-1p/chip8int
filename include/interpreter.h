@@ -1,6 +1,11 @@
+#pragma once
+
 #include <array>
 #include <cstdint>
 #include <vector>
+#include "display.h"
+#include "memory.h"
+
 namespace chip8 {
 
     struct registers {
@@ -12,9 +17,18 @@ namespace chip8 {
         uint8_t sound_timer;
     };
 
-    class Chip8VM {
+    class CPU {
+        private:
+            instruction::Instruction opcode;
+            Memory* memory;
+            Display* display;
         public:
-            static registers regs;
-            static std::vector<uint16_t> stack;
+            registers regs;
+            std::vector<uint16_t> stack;
+
+            CPU(Memory* memory, Display* display);
+            void set_pc(uint16_t start);
+            void reset();
+            int next_instruction();
     };
 }

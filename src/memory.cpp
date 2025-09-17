@@ -1,4 +1,5 @@
 #include "../include/memory.h"
+#include <fstream>
 #include <stdexcept>
 
 std::array<uint8_t, chip8::MEMORY_SIZE> chip8::Memory::buffer;
@@ -39,4 +40,21 @@ void chip8::Memory::load_font() {
     for(int i=0x050; i<0x09F; i++) {
         buffer[i] = chip8_fontset[i-0x050];
     }
+}
+
+chip8::instruction::Instruction chip8::Memory::read_instruction(word pc) {
+    return chip8::instruction::decode(read_word(pc));
+}
+
+void chip8::Memory::load_rom(const std::string &path) {
+    std::ifstream rom(path, std::ios::binary);
+    if(!rom.is_open()) throw std::runtime_error("Failed to open ROM file");
+
+    rom.seekg(0, std::ios::end);
+    size_t size = rom.tellg();
+    rom.seekg(0, std::ios::beg);
+
+    if(size > MEMORY_SIZE - 0x200) throw std::runtime_error("ROM file too large");
+    rom.read(reinterpret_cast<char*>(buffer.data() + 0x200), size);
+    rom.close();
 }

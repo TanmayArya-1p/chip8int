@@ -1,6 +1,9 @@
+#pragma once
+
 #include <array>
 #include <cstdint>
-
+#include <string>
+#include "instruction.h"
 typedef uint16_t word;
 
 namespace chip8 {
@@ -38,5 +41,7 @@ namespace chip8 {
             static void write_word(word content, word address);
             static word read_word(word address);
             static void load_font();
+            static void load_rom(const std::string& path);
+            static instruction::Instruction read_instruction(word address);
     };
 } //namespace chip8

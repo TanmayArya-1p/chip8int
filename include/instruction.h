@@ -1,5 +1,7 @@
+#pragma once
 #include <bits/stdc++.h>
 #include <cstdint>
+typedef uint16_t word;
 
 namespace chip8 {
 namespace instruction {
@@ -7,6 +9,7 @@ namespace instruction {
     struct Instruction {
         uint16_t opcode;
 
+        uint8_t opnibble; //nibble 0
         uint8_t n1; //nibble 1
         uint8_t n2; //nibble 2
         uint8_t n3; //nibble 3
@@ -16,6 +19,6 @@ namespace instruction {
         uint16_t nnn;
     };
 
-    Instruction decode(uint16_t opcode);
+    Instruction decode(word opcode);
 } //namespace instruction
 } //namespace chip8
