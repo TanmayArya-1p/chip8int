@@ -33,7 +33,7 @@ chip8::CPU::CPU(chip8::Memory* memory, chip8::Display* display, bool legacy_shif
 int chip8::CPU::next_instruction() {
     this->opcode = memory->read_instruction(regs.pc);
     regs.pc += 2;
-    std::cout << "Opcode: " << std::hex << opcode.opcode << std::endl;
+    // std::cout << "Opcode: " << std::hex << opcode.opcode << std::endl;
     switch(opcode.opnibble) {
         case(0x0):
             switch(opcode.opcode) {
@@ -163,7 +163,7 @@ int chip8::CPU::next_instruction() {
             for (int i=0;i<n;i++) {
                 sprite[i] = memory->read(this->regs.i+i);
             }
-            display->draw_sprite(this->regs.v[opcode.n1], this->regs.v[opcode.n2], sprite);
+            this->regs.v[0xF] = this->display->draw_sprite(this->regs.v[opcode.n1], this->regs.v[opcode.n2], sprite);
             break;
         }
         case(0xE) : {
@@ -171,12 +171,12 @@ int chip8::CPU::next_instruction() {
             switch (opcode.nn) {
                 case(0x9E):
                     //skip if key is pressed
-                    if(chip8::KeyState.at(this->regs.v[opcode.n1-1]))
+                    if(chip8::KeyState.at(this->regs.v[opcode.n1] & 0xF))
                         this->regs.pc += 2;
                     break;
                 case(0xA1):
                     //skip if key is not pressed
-                    if(!chip8::KeyState.at(this->regs.v[opcode.n1-1]))
+                    if(!chip8::KeyState.at(this->regs.v[opcode.n1] & 0xF))
                         this->regs.pc += 2;
                     break;
                 default:

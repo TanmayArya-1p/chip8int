@@ -10,6 +10,9 @@
 #include <unistd.h>
 
 
+constexpr double TIMER_REDUCTION_PERIOD = 1000.0/60;
+
+
 int main(int argc, char* argv[]) {
     //chip8 <rom_file> <display_scale> <cycle_period>
 
@@ -27,7 +30,18 @@ int main(int argc, char* argv[]) {
     int ctr = 0;
     auto start_time = std::chrono::system_clock::now();
 
+    auto timer_decrement_timer = start_time;
+
     while(!quit) {
+
+        auto curr = std::chrono::system_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(curr - start_time);
+        int reduce_timers = static_cast<int>(elapsed.count() / TIMER_REDUCTION_PERIOD);
+        cpu->regs.delay_timer = cpu->regs.delay_timer > reduce_timers ? cpu->regs.delay_timer - reduce_timers : 0;
+        cpu->regs.sound_timer = cpu->regs.sound_timer > reduce_timers ? cpu->regs.sound_timer - reduce_timers : 0;
+        timer_decrement_timer = std::chrono::system_clock::now();
+
+
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
                 quit = true;
@@ -38,7 +52,7 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
-        SDL_Delay(argv[3] ? atoi(argv[3]) : 10);
+        SDL_Delay(argv[3] ? atoi(argv[3]) : 30);
         ctr++;
         cpu->next_instruction();
     }
