@@ -1,6 +1,8 @@
 #include "../include/display.h"
 #include "../include/memory.h"
 #include "../include/interpreter.h"
+#include "../include/input.h"
+
 
 #include <SDL2/SDL_events.h>
 #include <chrono>
@@ -9,6 +11,8 @@
 
 
 int main(int argc, char* argv[]) {
+    //chip8 <rom_file> <display_scale> <cycle_period>
+
     chip8::Display* display = new chip8::Display(argv[2] ? atoi(argv[2]) : 20);
     chip8::Memory* memory = new chip8::Memory();
 
@@ -23,13 +27,16 @@ int main(int argc, char* argv[]) {
     int ctr = 0;
     auto start_time = std::chrono::system_clock::now();
 
-
     while(!quit) {
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
                 quit = true;
+            } else {
+                if(chip8::handle_key_state_change(event) && cpu->waiting_keypress) {
+                    cpu->waiting_keypress = false;
+                    cpu->regs.pc+=2;
+                }
             }
-
         }
         SDL_Delay(argv[3] ? atoi(argv[3]) : 10);
         ctr++;
@@ -40,6 +47,5 @@ int main(int argc, char* argv[]) {
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
     std::cout << "Execution time: " << duration << " ms" << std::endl;
     std::cout << "Instructions per second: " << ctr/(duration/1000.0) << std::endl;
-
     return 0;
 }

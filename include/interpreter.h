@@ -23,10 +23,12 @@ namespace chip8 {
             Memory* memory;
             Display* display;
         public:
+            bool waiting_keypress;
+            bool legacy_shift_mode;
             registers regs;
             std::vector<uint16_t> stack;
 
-            CPU(Memory* memory, Display* display);
+            CPU(Memory* memory, Display* display,bool legacy_shift_mode=false);
             void set_pc(uint16_t start);
             void reset();
             int next_instruction();

@@ -7,7 +7,7 @@ add_executable(chip8
     src/memory.cpp
     src/display.cpp
     src/instruction.cpp
-    # src/input.cpp
+    src/input.cpp
     src/interpreter.cpp
 )
 

@@ -54,7 +54,7 @@ void chip8::Memory::load_rom(const std::string &path) {
     size_t size = rom.tellg();
     rom.seekg(0, std::ios::beg);
 
-    if(size > MEMORY_SIZE - 0x200) throw std::runtime_error("ROM file too large");
-    rom.read(reinterpret_cast<char*>(buffer.data() + 0x200), size);
+    if(size > (MEMORY_SIZE - 0x200)) throw std::runtime_error("ROM file too large");
+    rom.read(reinterpret_cast<char*>(buffer.data() + 0x050), size);
     rom.close();
 }
