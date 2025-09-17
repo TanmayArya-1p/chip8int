@@ -3,7 +3,7 @@
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
 #include <sys/types.h>
-#include <bits/stdc++.h>
+#include <vector>
 
 
 namespace chip8 {
@@ -20,4 +20,4 @@ namespace chip8 {
             bool draw_sprite(uint8_t x, uint8_t y, std::vector<uint8_t> sprite);
             void clear();
     };
-}
+} // namespace chip8

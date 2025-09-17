@@ -4,10 +4,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <sys/types.h>
-#include "../include/display.h"
+#include "display.h"
+#include "config.h"
 
-
-#define WINDOW_NAME "Chip8"
 
 chip8::Display::Display(int scale) {
     this->scale = scale;

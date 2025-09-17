@@ -1,12 +1,13 @@
-#include "../include/display.h"
-#include "../include/memory.h"
-#include "../include/interpreter.h"
-#include "../include/input.h"
-
+#include "display.h"
+#include "memory.h"
+#include "interpreter.h"
+#include "input.h"
+#include "config.h"
 
 #include <SDL2/SDL_events.h>
 #include <chrono>
 #include <ctime>
+#include <iostream>
 #include <unistd.h>
 
 
@@ -57,9 +58,14 @@ int main(int argc, char* argv[]) {
         cpu->next_instruction();
     }
 
+
+    #ifdef DEBUG_MODE
     auto end_time = std::chrono::system_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
     std::cout << "Execution time: " << duration << " ms" << std::endl;
     std::cout << "Instructions per second: " << ctr/(duration/1000.0) << std::endl;
+    #endif
+
+
     return 0;
 }

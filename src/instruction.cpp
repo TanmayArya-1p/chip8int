@@ -1,4 +1,4 @@
-#include "../include/instruction.h"
+#include "instruction.h"
 
 chip8::instruction::Instruction chip8::instruction::decode(word opcode) {
     return Instruction{

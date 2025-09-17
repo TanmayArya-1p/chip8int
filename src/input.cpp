@@ -3,7 +3,8 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_scancode.h>
 #include <unordered_map>
-#include "../include/input.h"
+#include "input.h"
+#include "config.h"
 #include <iostream>
 
 
@@ -35,6 +36,11 @@ bool chip8::handle_key_state_change(SDL_Event& event) {
         return false;
     }
     chip8::KeyState[key_map[key]] = (event.type == SDL_KEYDOWN);
+
+    #ifdef DEBUG_MODE
     std::cout << "Key state changed: " << key_map[key] << " to " << chip8::KeyState[key_map[key]] << std::endl;
+    #endif
+
+
     return true;
 }

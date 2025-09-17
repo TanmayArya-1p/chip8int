@@ -1,12 +1,9 @@
-#include <bits/stdc++.h>
 #include <cstddef>
-#include "../include/interpreter.h"
-#include "../include/input.h"
+#include <iostream>
+#include "interpreter.h"
+#include "input.h"
+#include "config.h"
 
-
-#define LEGACY_SHIFT_MODE 0
-#define LEGACY_JUMP_OFFSET 0
-#define AMIGA_OVERFLOW_FLAGSET 1
 
 void chip8::CPU::set_pc(uint16_t start) {
     this->regs.pc = start;
@@ -33,7 +30,9 @@ chip8::CPU::CPU(chip8::Memory* memory, chip8::Display* display, bool legacy_shif
 int chip8::CPU::next_instruction() {
     this->opcode = memory->read_instruction(regs.pc);
     regs.pc += 2;
-    // std::cout << "Opcode: " << std::hex << opcode.opcode << std::endl;
+    #ifdef DEBUG_MODE
+    std::cout << "Opcode: " << std::hex << opcode.opcode << std::endl;
+    #endif
     switch(opcode.opnibble) {
         case(0x0):
             switch(opcode.opcode) {

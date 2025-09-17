@@ -1,5 +1,4 @@
 #pragma once
-#include <bits/stdc++.h>
 #include <cstdint>
 typedef uint16_t word;
 

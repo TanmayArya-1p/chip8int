@@ -33,4 +33,4 @@ namespace chip8 {
             void reset();
             int next_instruction();
     };
-}
+} // namespace chip8

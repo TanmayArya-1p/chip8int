@@ -6,4 +6,4 @@
 namespace chip8 {
     inline std::array<bool,16> KeyState;
     bool handle_key_state_change(SDL_Event& event);
-}
+} // namespace chip8
