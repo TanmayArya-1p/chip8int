@@ -16,8 +16,5 @@ namespace chip8 {
         public:
             static registers regs;
             static std::vector<uint16_t> stack;
-
-
-
-    }
+    };
 }

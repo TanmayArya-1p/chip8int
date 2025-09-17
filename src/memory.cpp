@@ -1,6 +1,8 @@
 #include "../include/memory.h"
 #include <stdexcept>
 
+std::array<uint8_t, chip8::MEMORY_SIZE> chip8::Memory::buffer;
+
 void chip8::Memory::clear() {
     buffer.fill(0);
     load_font();
